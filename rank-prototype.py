@@ -2,16 +2,21 @@ import discord
 from collections import defaultdict
 from discord.ext import commands, tasks
 import json
-from dotenv import load_dotenv
+import asyncio
 
+intents = discord.Intents.default() 
+intents.reactions = True
 
-bot = commands.Bot(command_prefix='!') 
-
+bot = commands.Bot(command_prefix='MR', intents=intents)
 # Dict to store voice state data
 voice_states = {}
 
 # Track game time totals
 game_times = defaultdict(int) 
+
+@bot.event
+async def on_ready():
+    update_leaderboard.start()
 
 @tasks.loop(minutes=1)  
 async def update_leaderboard():
@@ -44,7 +49,7 @@ async def update_leaderboard():
 async def before_print():
     await bot.wait_until_ready()
     
-update_leaderboard.start()  
+
 
 @bot.command()
 async def leaderboard(ctx):
@@ -68,5 +73,13 @@ async def topgames(ctx):
         embed.add_field(name=f"{i}. {game}", value=f"{time//60} hours") 
     
     await ctx.send(embed=embed)
+    
+# async def start_tasks():
+#     await bot.wait_until_ready()  
+#     update_leaderboard.start()
 
-bot.run('token')
+# bot.loop.create_task(start_tasks())
+    
+
+
+bot.run('MTE5MTc1MTU5NjIyMTE1NzM5Nw.GR_Ovp.ZSMEWWf1HyoaxyB6x_UjIBBzqOj3pA8Y7mYIgI')

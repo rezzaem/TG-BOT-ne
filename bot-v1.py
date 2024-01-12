@@ -19,7 +19,7 @@ TOKEN = os.getenv('token')
 intents = discord.Intents.default() 
 intents.reactions = True
 
-bot = commands.Bot(command_prefix='MR', intents=intents)
+bot = commands.Bot(command_prefix='MR ', intents=intents)
 
 # load banner images 
 banner_images = []
