@@ -10,7 +10,7 @@ load_dotenv()
 # Get the token from the .env file
 TOKEN = getenv('token')
 
-BOT_PREFIX = '!cr'
+BOT_PREFIX = '!cr '
 DB_FILE = "bot.db"
 
 intents = discord.Intents.all() 
@@ -71,40 +71,26 @@ async def leaderboard(ctx, *, game):
      
     await ctx.send(leaderboard)
     
-# @bot.event    
-# async def on_voice_state_update(member, before, after):
-#     if after.channel:
-#         # Joined a voice channel
-#         game = discord.Game(name=member.activity.name) 
-#         db = sqlite3.connect(DB_FILE)
-#         cursor = db.cursor()
-#         cursor.execute("SELECT id FROM games WHERE name = ?", (game.name,))
-#         game_id = cursor.fetchone() 
-#         if game_id is None:
-#             cursor.execute("INSERT INTO games (name) VALUES (?)", (game.name,))
-#             game_id = cursor.lastrowid
-#         else : 
-#             game_id = game_id[0]
-        
-#         cursor.execute("INSERT INTO gametime (guild_id, member_id, game_id, start_time) VALUES (?, ?, ?, ?)",
-#                    (member.guild.id, member.id, game_id, datetime.now().timestamp()))
-#         db.commit()
-#         db.close()
-        
-#     if before.channel:
-#         # Left voice channel 
-#         db = sqlite3.connect(DB_FILE) 
-#         db.execute("UPDATE gametime SET end_time = ? WHERE id = (SELECT id FROM gametime WHERE member_id = ? ORDER BY ID DESC LIMIT 1)",
-#                    (datetime.now().timestamp(), member.id))
-#         db.commit()
-#         db.close()
+
 @bot.event
 async def on_presence_update(before,after):
+    """
+    Event handler for presence updates.
+    
+    This function is called when a user's presence is updated, such as when they start or stop playing a game or join/leave a voice channel.
+    It performs the following actions:
+    - If the user is playing a game and in a voice channel, it records the game and start time in the database.
+    - If the user is in a voice channel but not playing a game, it updates the end time of the last recorded game in the database.
+    
+    Parameters:
+    - before (discord.Member): The user's presence before the update.
+    - after (discord.Member): The user's presence after the update.
+    """
     user = after
     
-    if user.bot:
+    if user.bot: # ignore bots
         return
-    if user.voice and user.activity:
+    if user.voice and user.activity: # user is in a voice channel and playing a game
         print(f"{user} is playing {user.activity.name}")
         game = discord.Game(name=user.activity.name) 
         db = sqlite3.connect(DB_FILE)
@@ -128,5 +114,7 @@ async def on_presence_update(before,after):
                    (datetime.now().timestamp(), user.id))
         db.commit()
         db.close()
+    # user joined a voice channel
+
         
 bot.run(TOKEN)

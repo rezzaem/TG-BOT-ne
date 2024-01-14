@@ -1,0 +1,8 @@
+tmux attach 
+برای وصل شدن به جایی ک ربات آلویز ران روی سرور
+
+Rez@@.1381
+پسورد سرور
+
+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
+پسورد موقت 10 روزه اکانت گیت هاب
